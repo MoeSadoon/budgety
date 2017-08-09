@@ -22,6 +22,7 @@ var UIController = (function() {
              }
         },
 
+        // Exposes the DOMstrings object to outer environments
         getDOMstrings: function() {
             return DOMstrings;
         }
@@ -32,13 +33,14 @@ var UIController = (function() {
 // GLOBAL APP CONTROLLER
 var controller = (function(budgetCtrl, UICtrl) {
 
+    // Gaining access to DOMstrings from UIController
     var DOM = UICtrl.getDOMstrings();
 
     const ctrlAddItem = () => {
         // 1. Get input data
         var input = UICtrl.getInput();
         console.log(input);
-        
+
         // 2. Add item to the budget controller
         // 3. Add new item to the user interface
         // 4. Calculate the budget
@@ -56,5 +58,3 @@ var controller = (function(budgetCtrl, UICtrl) {
 
 })(budgetController, UIController);
 
-
-//
