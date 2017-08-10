@@ -36,6 +36,20 @@ var controller = (function(budgetCtrl, UICtrl) {
     // Gaining access to DOMstrings from UIController
     var DOM = UICtrl.getDOMstrings();
 
+    // When invoked, this makes all the event listeners ready
+    const setUpEventListeners = () => {
+        
+        document.querySelector(DOM.inputBtn).addEventListener('click', ctrlAddItem)
+
+        // Adding to global environment since you can press enter anywhere
+        document.addEventListener('keypress', function(event) {
+            if (event.keyCode === 13 || event.which === 13) {
+                ctrlAddItem();
+            }
+        })
+
+    }
+
     const ctrlAddItem = () => {
         // 1. Get input data
         var input = UICtrl.getInput();
@@ -45,16 +59,17 @@ var controller = (function(budgetCtrl, UICtrl) {
         // 3. Add new item to the user interface
         // 4. Calculate the budget
         // 5. Display the budget on the UI
-    }
-    document.querySelector(DOM.inputBtn).addEventListener('click', ctrlAddItem)
+    };
 
-
-    // Adding to global environment since you can press enter anywhere
-    document.addEventListener('keypress', function(event) {
-        if (event.keyCode === 13 || event.which === 13) {
-            ctrlAddItem();
+    return {
+        init: function() {
+            console.log('Application has started');
+            setUpEventListeners();
         }
-    })
+    };
 
 })(budgetController, UIController);
+
+// This runs as soon as the application has started
+controller.init();
 
