@@ -33,11 +33,12 @@ var UIController = (function() {
 // GLOBAL APP CONTROLLER
 var controller = (function(budgetCtrl, UICtrl) {
 
-    // Gaining access to DOMstrings from UIController
-    var DOM = UICtrl.getDOMstrings();
 
     // When invoked, this makes all the event listeners ready
     const setUpEventListeners = () => {
+        
+        // Gaining access to DOMstrings from UIController
+        var DOM = UICtrl.getDOMstrings();
         
         document.querySelector(DOM.inputBtn).addEventListener('click', ctrlAddItem)
 
