@@ -25,6 +25,35 @@ var budgetController = (function() {
         }
     };
 
+    // Makes anything within the returned object accessible outside the IIFE
+    return {
+        addItem: function(type, desc, val) {
+            var newItem, ID;
+
+            // If array of inc/exp is not empty, it sets the ID by going to the last element in array, getting its ID and +1 to it
+            if (data.allItems[type].length > 0) {
+                ID = data.allItems[type][data.allItems[type].length -1].id + 1;
+            }
+            else {
+                ID = 0
+            }
+
+            // Creates new item dependinng on whether its an expense or income
+            if(type === 'exp') {
+                newItem = new Expense(ID, desc, val);
+            }
+            else if (type === 'inc') {
+                newItem = new Income(ID, desc, val);
+            }
+
+            // Pushes item to the relevant array depending on whether its inc/exp
+            data.allItems[type].push(newItem);
+
+            return newItem
+
+        },
+    }
+
 })();
 
 // UI CONTROLLER
@@ -76,11 +105,13 @@ var controller = (function(budgetCtrl, UICtrl) {
     }
 
     const ctrlAddItem = () => {
+        var input, newItem;
         // 1. Get input data
-        var input = UICtrl.getInput();
-        console.log(input);
-
-        // 2. Add item to the budget controller
+        input = UICtrl.getInput();
+        
+        // 2. Add item to the budget controller by taking input from UI
+        newItem = budgetCtrl.addItem(input.type, input.description, input.value); 
+    
         // 3. Add new item to the user interface
         // 4. Calculate the budget
         // 5. Display the budget on the UI
