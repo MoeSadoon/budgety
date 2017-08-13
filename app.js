@@ -13,6 +13,16 @@ var budgetController = (function() {
         this.value = value;
     };
 
+    const calculateTotal = (type) => {
+        var sum = 0;
+
+        data.allItems[type].forEach(function(element) {
+            sum += element.value;
+        });
+        // Store sum in data all totals object
+        data.allTotals[type] = sum;
+    };
+
     var data = {
         allItems: {
             exp: [],
@@ -22,7 +32,9 @@ var budgetController = (function() {
         allTotals: {
             exp: 0,
             inc: 0
-        }
+        },
+        budget: 0,
+        percentage: -1
     };
 
     // Makes anything within the returned object accessible outside the IIFE
@@ -53,9 +65,36 @@ var budgetController = (function() {
 
         },
 
+        calculateBudget: function() {
+            // Calculate total income and expenses
+            calculateTotal('exp');
+            calculateTotal('inc');
+
+            // Calculate the budget : income - expenses
+            data.budget = data.allTotals.inc - data.allTotals.exp;
+
+            // Calculate the percentage of income that we spent
+            if(data.allTotals.inc > 0) {
+                data.percentage = Math.round((data.allTotals.exp / data.allTotals.inc) * 100);
+            }
+            else {
+                data.percentage = -1;
+            }
+        },
+
+        getBudget: function() {
+            return {
+                budget: data.budget,
+                totalInc: data.allTotals.inc,
+                totalExp: data.allTotals.exp,
+                percentage: data.percentage
+            }
+        },
+
         testing: function() {
             return data;
-        }
+        },
+
     }
 
 })();
@@ -139,7 +178,7 @@ var UIController = (function() {
 
 // GLOBAL APP CONTROLLER
 var controller = (function(budgetCtrl, UICtrl) {
-
+  
 
     // When invoked, this makes all the event listeners ready
     const setUpEventListeners = () => {
@@ -160,10 +199,13 @@ var controller = (function(budgetCtrl, UICtrl) {
 
     const updateBudget = () => {
         // 1. Calculate the budget
+        budgetCtrl.calculateBudget();
 
         // 2. Return the budget
+        var budget = budgetCtrl.getBudget();
 
         // 3. Display the budget on the UI
+        console.log(budget);
     };
 
     const ctrlAddItem = () => {
@@ -194,7 +236,7 @@ var controller = (function(budgetCtrl, UICtrl) {
 
         // 5. Calculate and update budget
         UICtrl + updateBudget();
-
+ 
     };
 
     return {
