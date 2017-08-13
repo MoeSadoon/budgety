@@ -52,6 +52,10 @@ var budgetController = (function() {
             return newItem
 
         },
+
+        testing: function() {
+            return data;
+        }
     }
 
 })();
@@ -74,7 +78,7 @@ var UIController = (function() {
             return {
                 type: document.querySelector(DOMstrings.inputType).value, //will be either inc or exp
                 description: document.querySelector(DOMstrings.inputDescription).value,
-                value: document.querySelector(DOMstrings.inputValue).value
+                value: parseFloat(document.querySelector(DOMstrings.inputValue).value)
              }
         },
 
@@ -115,12 +119,10 @@ var UIController = (function() {
         clearInput: function() {
             // Returns array-like structure of inputs
             var fields = document.querySelectorAll(DOMstrings.inputDescription + ',' + DOMstrings.inputValue);
-            console.log('inputs: ' + fields);
 
             // Convert array-like structure into an actual array
             // We do this by tricking the slice prototype function of the Array function constructor into thinking 'inputs' is an array by using 'call'
             var fieldsArr = Array.prototype.slice.call(fields);
-            console.log('inputsArray: ' + fieldsArr);
 
             // Use forEach ot set every field in the fields array back to blank
             fieldsArr.forEach(function(element) {
@@ -129,8 +131,7 @@ var UIController = (function() {
 
             // put focus back on description field:
             fieldsArr[0].focus();
-        }
-
+        },
         
     };
 
@@ -157,22 +158,43 @@ var controller = (function(budgetCtrl, UICtrl) {
 
     }
 
+    const updateBudget = () => {
+        // 1. Calculate the budget
+
+        // 2. Return the budget
+
+        // 3. Display the budget on the UI
+    };
+
     const ctrlAddItem = () => {
         var input, newItem;
         // 1. Get input data
         input = UICtrl.getInput();
+
+        if(!input.description) {
+            const descError = 'Please provide a description';
+            alert(descError);
+            throw descError;
+        }
+        if(isNaN(input.value) || !input.value > 0) {
+            const valError = 'Please provide a proper value';
+            alert(valError);
+            throw valError;
+        }
+
         
         // 2. Add item to the budget controller by taking input from UI
         newItem = budgetCtrl.addItem(input.type, input.description, input.value); 
     
         // 3. Add new item to the user interface
-        UIController.addListItem(newItem, input.type);
+        UICtrl.addListItem(newItem, input.type);
 
         // 4. Clear in input fields
-        UIController.clearInput();
+        UICtrl.clearInput();
 
-        // 5. Calculate the budget
-        // 6. Display the budget on the UI
+        // 5. Calculate and update budget
+        UICtrl + updateBudget();
+
     };
 
     return {
