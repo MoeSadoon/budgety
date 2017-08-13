@@ -112,6 +112,25 @@ var UIController = (function() {
 
         },     
 
+        clearInput: function() {
+            // Returns array-like structure of inputs
+            var fields = document.querySelectorAll(DOMstrings.inputDescription + ',' + DOMstrings.inputValue);
+            console.log('inputs: ' + fields);
+
+            // Convert array-like structure into an actual array
+            // We do this by tricking the slice prototype function of the Array function constructor into thinking 'inputs' is an array by using 'call'
+            var fieldsArr = Array.prototype.slice.call(fields);
+            console.log('inputsArray: ' + fieldsArr);
+
+            // Use forEach ot set every field in the fields array back to blank
+            fieldsArr.forEach(function(element) {
+                element.value = '';
+            })
+
+            // put focus back on description field:
+            fieldsArr[0].focus();
+        }
+
         
     };
 
@@ -148,9 +167,12 @@ var controller = (function(budgetCtrl, UICtrl) {
     
         // 3. Add new item to the user interface
         UIController.addListItem(newItem, input.type);
-        
-        // 4. Calculate the budget
-        // 5. Display the budget on the UI
+
+        // 4. Clear in input fields
+        UIController.clearInput();
+
+        // 5. Calculate the budget
+        // 6. Display the budget on the UI
     };
 
     return {
