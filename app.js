@@ -112,7 +112,8 @@ var UIController = (function() {
         budgetLabel: '.budget__value',
         incomeLabel: '.budget__income--value',
         expensesLabel: '.budget__expenses--value',
-        percentageLabel: '.budget__expenses--percentage'
+        percentageLabel: '.budget__expenses--percentage',
+        container: '.container'
 
     };
 
@@ -136,14 +137,14 @@ var UIController = (function() {
             // Create HTML string for income/expense item with placeholder text wrapped in '%_%'
             if(type === 'inc') {
                 element = DOMstrings.incomeContainer;
-                html = `<div class="item clearfix" id="income-%id%"><div class="item__description">%description%</div>
+                html = `<div class="item clearfix" id="inc-%id%"><div class="item__description">%description%</div>
                 <div class="right clearfix"><div class="item__value">%value%</div>
                 <div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline">
                 </i></button></div></div></div>`;
             }
             else if(type === 'exp') {
                 element = DOMstrings.expenseContainer;
-                html = `<div class="item clearfix" id="expense-%id%"><div class="item__description">%description%</div>
+                html = `<div class="item clearfix" id="exp-%id%"><div class="item__description">%description%</div>
                 <div class="right clearfix"><div class="item__value">%value%</div><div class="item__percentage">21%</div>
                 <div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button>
                 </div></div></div>`;
@@ -211,7 +212,13 @@ var controller = (function(budgetCtrl, UICtrl) {
             if (event.keyCode === 13 || event.which === 13) {
                 ctrlAddItem();
             }
-        })
+        });
+
+        // Delegate to container element that holds both income and expense items
+        // This is to avoid having to add event listener to every individual income/expense item
+        // Made possible thanks to EVENT BUBBLING (event propagates from target to root)
+
+        document.querySelector(DOM.container).addEventListener('click', ctrDeleteItem);
 
     }
 
@@ -256,6 +263,23 @@ var controller = (function(budgetCtrl, UICtrl) {
         UICtrl + updateBudget();
  
     };
+
+    const ctrDeleteItem = (event) => {
+        var itemID, splitID, type, id;
+
+        // Traverse up the DOM from the click target to the delete target's id (ie the whole income/expense item)
+        itemID = event.target.parentNode.parentNode.parentNode.parentNode.id;
+
+        if(itemID) {
+
+        // Split itemID at '-', returning an array containing 'inc' and '0;
+            splitID = itemID.split('-');
+
+            type = splitID[0];
+
+            id = splitID[1];
+        }
+    }
 
     return {
         init: function() {
