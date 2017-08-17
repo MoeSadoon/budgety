@@ -5,6 +5,21 @@ var budgetController = (function() {
         this.id = id;
         this.description = description;
         this.value = value;
+        this.percentage = -1;
+    };
+    
+    Expense.prototype.calculatePercentage = function(totalIncome) {
+
+        if(totalIncome > 0) {
+            this.percentage = Math.round((this.value / totalIncome) * 100);
+        } else {
+            this.percentage = -1;
+        }
+
+    };
+
+    Expense.prototype.getPercentage = function() {
+        return this.percentage;
     };
 
     var Income = function(id, description, value) {
@@ -12,6 +27,7 @@ var budgetController = (function() {
         this.description = description;
         this.value = value;
     };
+
 
     const calculateTotal = (type) => {
         var sum = 0;
@@ -99,6 +115,20 @@ var budgetController = (function() {
             }
         },
 
+        calculatePercentages: function() {
+            // Returns an array of percentages for each expense
+            data.allItems.exp.forEach(function(current) {
+                current.calculatePercentage(data.allTotals.inc);
+            })
+        },
+
+        getPercentages: function() {
+            var percentages = data.allItems.exp.map(function(current) {
+                return current.getPercentage();
+            })
+            return percentages;
+        },
+
         getBudget: function() {
             return {
                 budget: data.budget,
@@ -175,6 +205,14 @@ var UIController = (function() {
             // Insert HTML into the DOM
             document.querySelector(element).insertAdjacentHTML('beforeend', newHtml);
 
+        },
+
+        deleteListItem: function(selectorID) {
+
+            // JS is weird, to remove child you have to select parent element then call removeChild() on it.
+            var el = document.getElementById(selectorID);
+
+            el.parentNode.removeChild(el);
         },     
 
         clearInput: function() {
@@ -250,6 +288,17 @@ var controller = (function(budgetCtrl, UICtrl) {
         UICtrl.displayBudget(budget);
     };
 
+    const updatePercentages = () => {
+        // 1. Calculate the percentages
+        budgetCtrl.calculatePercentages();
+
+        // 2. Read the percentages from the budget controller
+        var percentages = budgetCtrl.getPercentages();
+
+        // 3. Display the percentages on the UI
+        console.log(percentages);
+    }
+
     const ctrlAddItem = () => {
         var input, newItem;
         // 1. Get input data
@@ -278,6 +327,9 @@ var controller = (function(budgetCtrl, UICtrl) {
 
         // 5. Calculate and update budget
         UICtrl + updateBudget();
+
+        // 6. Calculate and update percentages
+        updatePercentages();
  
     };
 
@@ -300,9 +352,14 @@ var controller = (function(budgetCtrl, UICtrl) {
         // 1. Delete item from the data structure
         budgetCtrl.deleteItem(type, id);  
         
-        // 2. Delete item from te UI
+        // 2. Delete item from the UI
+        UIController.deleteListItem(itemID);
 
         // 3. Update and show the budget
+        updateBudget();
+
+        // 4. Calculate and update the perentages
+        updatePercentages();
     }
 
     return {
