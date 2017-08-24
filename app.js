@@ -196,6 +196,13 @@ var UIController = (function() {
         return (type === 'exp' ? '-' : '+') + ' ' + int + '.' + dec;
     };
 
+    const nodeListForEach = (list, callback) => {
+        for (var i = 0; i < list.length; i++ ) {
+            callback(list[i], i)
+        }
+    };
+
+
     return {
         getInput: function() {
             return {
@@ -289,13 +296,7 @@ var UIController = (function() {
             // This returns a LIST of NODEs:
             fields = document.querySelectorAll(DOMstrings.expensesPercLabel);
 
-            //Create our own custom function that mimics the 'forEach' function since its not available for list
-            const nodeListForEach = (list, callback) => {
-                for (var i = 0; i < list.length; i++ ) {
-                    callback(list[i], i)
-                }
-            };
-
+            //Create our own custom function that mimics the 'forEach' function since its not available for lists
 
             nodeListForEach(fields, function(current, index){
                 if(percentages[index] > 0 ) {
@@ -305,7 +306,8 @@ var UIController = (function() {
                     current.textContent = '---';
                 }
                 
-            })
+            });
+            
         },
 
         displayMonth: function() {
@@ -325,6 +327,20 @@ var UIController = (function() {
 
             document.querySelector(DOMstrings.dateLabel).textContent = months[month] + ' ' + year;
 
+
+        },
+
+        changeType: function() {
+            var fields;
+
+            // Creates a node list
+            fields = document.querySelectorAll(DOMstrings.inputType + ',' + DOMstrings.inputDescription + ',' + DOMstrings.inputValue);
+
+            nodeListForEach(fields, function(cur) {
+                cur.classList.toggle('red-focus');
+            });
+
+            document.querySelector(DOMstrings.inputBtn).classList.toggle('red');            
 
         }
 
@@ -356,6 +372,9 @@ var controller = (function(budgetCtrl, UICtrl) {
         // Made possible thanks to EVENT BUBBLING (event propagates from target to root)
 
         document.querySelector(DOM.container).addEventListener('click', ctrDeleteItem);
+
+        document.querySelector(DOM.inputType).addEventListener('change', UICtrl.changeType);
+
 
     }
 
