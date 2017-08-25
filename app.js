@@ -1,5 +1,5 @@
 // BUDGET CONTROLLER
-var budgetController = (function() {
+const budgetController = (function() {
     
     var Expense = function(id, description, value) {
         this.id = id;
@@ -30,7 +30,7 @@ var budgetController = (function() {
 
 
     const calculateTotal = (type) => {
-        var sum = 0;
+        let sum = 0;
 
         data.allItems[type].forEach(function(element) {
             sum += element.value;
@@ -39,7 +39,7 @@ var budgetController = (function() {
         data.allTotals[type] = sum;
     };
 
-    var data = {
+    let data = {
         allItems: {
             exp: [],
             inc: [],
@@ -56,7 +56,7 @@ var budgetController = (function() {
     // Makes anything within the returned object accessible outside the IIFE
     return {
         addItem: function(type, desc, val) {
-            var newItem, ID;
+            let newItem, ID;
 
             // If array of inc/exp is not empty, it sets the ID by going to the last element in array, getting its ID and +1 to it
             if (data.allItems[type].length > 0) {
@@ -82,7 +82,7 @@ var budgetController = (function() {
         },
 
         deleteItem: function(type, id) {
-            var ids, index;
+            let ids, index;
             // Use the map function to create an array of all the IDs
             ids = data.allItems[type].map(function(current) {
                 return current.id;
@@ -123,7 +123,7 @@ var budgetController = (function() {
         },
 
         getPercentages: function() {
-            var percentages = data.allItems.exp.map(function(current) {
+            let percentages = data.allItems.exp.map(function(current) {
                 return current.getPercentage();
             })
             return percentages;
@@ -147,9 +147,9 @@ var budgetController = (function() {
 })();
 
 // UI CONTROLLER
-var UIController = (function() {
+const UIController = (function() {
 
-    var DOMstrings = {
+    const DOMstrings = {
         inputType: '.add__type',
         inputDescription: '.add__description',
         inputValue: '.add__value',
@@ -167,7 +167,7 @@ var UIController = (function() {
     };
 
     const formatNumber = (num, type) => {
-        var numSplit, int, dec;
+        let numSplit, int, dec;
         // + / - before the number depending on the type
         // exactly 2 decimal points
         // commas seperating the thousands
@@ -197,7 +197,7 @@ var UIController = (function() {
     };
 
     const nodeListForEach = (list, callback) => {
-        for (var i = 0; i < list.length; i++ ) {
+        for (let i = 0; i < list.length; i++ ) {
             callback(list[i], i)
         }
     };
@@ -218,7 +218,7 @@ var UIController = (function() {
         },
 
         addListItem: function(obj, type) {
-            var html, newHtml, element;
+            let html, newHtml, element;
 
             // Create HTML string for income/expense item with placeholder text wrapped in '%_%'
             if(type === 'inc') {
@@ -249,18 +249,18 @@ var UIController = (function() {
         deleteListItem: function(selectorID) {
 
             // JS is weird, to remove child you have to select parent element then call removeChild() on it.
-            var el = document.getElementById(selectorID);
+            let el = document.getElementById(selectorID);
 
             el.parentNode.removeChild(el);
         },     
 
         clearInput: function() {
             // Returns array-like structure of inputs
-            var fields = document.querySelectorAll(DOMstrings.inputDescription + ',' + DOMstrings.inputValue);
+            let fields = document.querySelectorAll(DOMstrings.inputDescription + ',' + DOMstrings.inputValue);
 
             // Convert array-like structure into an actual array
             // We do this by tricking the slice prototype function of the Array function constructor into thinking 'inputs' is an array by using 'call'
-            var fieldsArr = Array.prototype.slice.call(fields);
+            let fieldsArr = Array.prototype.slice.call(fields);
 
             // Use forEach ot set every field in the fields array back to blank
             fieldsArr.forEach(function(element) {
@@ -272,7 +272,7 @@ var UIController = (function() {
         },
 
         displayBudget: function(obj) {
-            var type;
+            let type;
 
             obj.budget > 0 ? type = 'inc' : type = 'exp';
 
@@ -291,7 +291,7 @@ var UIController = (function() {
         },
 
         displayPercentages: function(percentages) {
-            var fields;
+            let fields;
 
             // This returns a LIST of NODEs:
             fields = document.querySelectorAll(DOMstrings.expensesPercLabel);
@@ -311,12 +311,12 @@ var UIController = (function() {
         },
 
         displayMonth: function() {
-            var now, month, months, year;
+            let now, month, year;
             
             // Creates new date object
             now = new Date();
 
-            months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+            const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
 
             // This returns a binary index value (eg 0 = January, 1 = February, etc)
             month = now.getMonth()
@@ -331,7 +331,7 @@ var UIController = (function() {
         },
 
         changeType: function() {
-            var fields;
+            let fields;
 
             // Creates a node list
             fields = document.querySelectorAll(DOMstrings.inputType + ',' + DOMstrings.inputDescription + ',' + DOMstrings.inputValue);
@@ -349,14 +349,14 @@ var UIController = (function() {
 })();
 
 // GLOBAL APP CONTROLLER
-var controller = (function(budgetCtrl, UICtrl) {
+const controller = (function(budgetCtrl, UICtrl) {
   
 
     // When invoked, this makes all the event listeners ready
     const setUpEventListeners = () => {
         
         // Gaining access to DOMstrings from UIController
-        var DOM = UICtrl.getDOMstrings();
+        const DOM = UICtrl.getDOMstrings();
 
         document.querySelector(DOM.inputBtn).addEventListener('click', ctrlAddItem)
 
@@ -383,7 +383,7 @@ var controller = (function(budgetCtrl, UICtrl) {
         budgetCtrl.calculateBudget();
 
         // 2. Return the budget
-        var budget = budgetCtrl.getBudget();
+        let budget = budgetCtrl.getBudget();
 
         // 3. Display the budget on the UI
         UICtrl.displayBudget(budget);
@@ -394,14 +394,14 @@ var controller = (function(budgetCtrl, UICtrl) {
         budgetCtrl.calculatePercentages();
 
         // 2. Read the percentages from the budget controller
-        var percentages = budgetCtrl.getPercentages();
+        let percentages = budgetCtrl.getPercentages();
 
         // 3. Display the percentages on the UI
         UICtrl.displayPercentages(percentages);
     }
 
     const ctrlAddItem = () => {
-        var input, newItem;
+        let input, newItem;
         // 1. Get input data
         input = UICtrl.getInput();
 
@@ -435,7 +435,7 @@ var controller = (function(budgetCtrl, UICtrl) {
     };
 
     const ctrDeleteItem = (event) => {
-        var itemID, splitID, type, id;
+        let itemID, splitID, type, id;
 
         // Traverse up the DOM from the click target to the delete target's id (ie the whole income/expense item)
         itemID = event.target.parentNode.parentNode.parentNode.parentNode.id;
