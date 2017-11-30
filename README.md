@@ -1,7 +1,7 @@
 # Budgety
 
 ## Premise
-A a budgeting app built using:
+A a budgeting web app built using:
 - HTML5
 - CSS3
 - JavaScript
