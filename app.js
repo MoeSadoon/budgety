@@ -1,7 +1,7 @@
 // BUDGET CONTROLLER
 const budgetController = (function () {
 
-    class budgetItem {
+    class BudgetItem {
         constructor(id, description, value) {
             this.id = id;
             this.description = description;
@@ -9,43 +9,40 @@ const budgetController = (function () {
         }
     }
 
-    class Expense extends budgetItem {
+
+    class Expense extends BudgetItem {
         constructor(id, description, value) {
-            super(id, description, value);
-            this.percentage = -1;
-        }
-    };
-
-    Expense.prototype.calculatePercentage = function (totalIncome) {
-
-        if (totalIncome > 0) {
-            this.percentage = Math.round((this.value / totalIncome) * 100);
-        } else {
+            console.log(...arguments);
+            super(...arguments);
             this.percentage = -1;
         }
 
+        calculatePercentage(totalIncome) {
+            if (totalIncome > 0) {
+                this.percentage = Math.round((this.value / totalIncome) * 100);
+            } else {
+                this.percentage = -1;
+            }
+        };
+    
+        getPercentage() {
+            return this.percentage;
+        };
+
     };
 
-    Expense.prototype.getPercentage = function () {
-        return this.percentage;
-    };
 
-
-    class Income extends budgetItem {
+    class Income extends BudgetItem {
         constructor(id, description, value) {
-            super(id, description, value);
+            super(...arguments);
         }
     }
 
-    const calculateTotal = (type) => {
-        let sum = 0;
 
-        data.allItems[type].forEach(function (element) {
-            sum += element.value;
-        });
-        // Store sum in data all totals object
+    function calculateTotal(type) {
+        let sum = data.allItems[type].reduce((total, val) => total += val.value, 0);
         data.allTotals[type] = sum;
-    };
+    }
 
     const data = {
         allItems: {
@@ -174,7 +171,7 @@ const UIController = (function () {
 
     };
 
-    const formatNumber = (num, type) => {
+    function formatNumber(num, type) {
         let numSplit, int, dec;
         // + / - before the number depending on the type
         // exactly 2 decimal points
@@ -204,7 +201,7 @@ const UIController = (function () {
         return (type === 'exp' ? '-' : '+') + ' ' + int + '.' + dec;
     };
 
-    const nodeListForEach = (list, callback) => {
+    function nodeListForEach(list, callback) {
         for (let i = 0; i < list.length; i++) {
             callback(list[i], i)
         }
@@ -361,7 +358,7 @@ const controller = (function (budgetCtrl, UICtrl) {
 
 
     // When invoked, this makes all the event listeners ready
-    const setUpEventListeners = () => {
+    function setUpEventListeners() {
 
         // Gaining access to DOMstrings from UIController
         const DOM = UICtrl.getDOMstrings();
@@ -386,7 +383,7 @@ const controller = (function (budgetCtrl, UICtrl) {
 
     }
 
-    const updateBudget = () => {
+    function updateBudget() {
         // 1. Calculate the budget
         budgetCtrl.calculateBudget();
 
@@ -397,7 +394,7 @@ const controller = (function (budgetCtrl, UICtrl) {
         UICtrl.displayBudget(budget);
     };
 
-    const updatePercentages = () => {
+    function updatePercentages() {
         // 1. Calculate the percentages
         budgetCtrl.calculatePercentages();
 
@@ -408,7 +405,7 @@ const controller = (function (budgetCtrl, UICtrl) {
         UICtrl.displayPercentages(percentages);
     }
 
-    const ctrlAddItem = () => {
+    function ctrlAddItem() {
         let input, newItem;
         // 1. Get input data
         input = UICtrl.getInput();
@@ -442,7 +439,7 @@ const controller = (function (budgetCtrl, UICtrl) {
 
     };
 
-    const ctrDeleteItem = (event) => {
+    function ctrDeleteItem(event) {
         let itemID, splitID, type, id;
 
         // Traverse up the DOM from the click target to the delete target's id (ie the whole income/expense item)
